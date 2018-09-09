@@ -14,7 +14,7 @@ import db from './database';
 
 export default class Server {
   private app: Express;
-  private static readonly DEFAULT_PORT = 3100;
+  private static readonly DEFAULT_PORT = 3300;
 
   constructor() {
     this.app = express();
@@ -61,6 +61,7 @@ export default class Server {
     const env = app.get('env');
     app.set('port', port);
     app.listen(port);
+    console.clear();
     console.log(`🌏⠀App is running at http://localhost:${port} in ${env} mode`);
   }
 }
