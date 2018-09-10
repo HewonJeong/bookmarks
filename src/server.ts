@@ -25,6 +25,7 @@ export default class Server {
   private async initDb() {
     try {
       await db.authenticate();
+      console.log('🛳 DB connection has been established successfully.');
     } catch (e) {
       console.error('Unable to connect to the database:', e);
     }
