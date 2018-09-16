@@ -1,3 +1,4 @@
+console.clear();
 require('dotenv').config({ path: './src/config/.env.local' });
 import Server from './Server';
 

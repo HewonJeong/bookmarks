@@ -1,6 +1,8 @@
 import { Router, Response, Request } from 'express';
-
+import auth from './auth';
 const routes = Router();
+
+routes.use('/auth', auth);
 
 routes.get('/', (req: Request, res: Response) => {
   res.send('GET request to the homepage');

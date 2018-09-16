@@ -12,6 +12,9 @@ import expressValidator from 'express-validator';
 import bluebird from 'bluebird';
 import db from './database';
 
+// API keys and Passport configuration
+import passportConfig from './config/passport';
+
 export default class Server {
   private app: Express;
   private static readonly DEFAULT_PORT = 3300;
@@ -32,6 +35,7 @@ export default class Server {
   }
 
   private middleware() {
+    console.log(passportConfig);
     const { app } = this;
     // primary app router
     app.use('/', routes);
@@ -62,7 +66,6 @@ export default class Server {
     const env = app.get('env');
     app.set('port', port);
     app.listen(port);
-    console.clear();
     console.log(`🌏⠀App is running at http://localhost:${port} in ${env} mode`);
   }
 }
