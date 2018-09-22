@@ -23,7 +23,7 @@ const options: StrategyOptionWithRequest = {
   clientID: FACEBOOK_ID,
   clientSecret: FACEBOOK_SECRET,
   callbackURL: '/auth/facebook/callback',
-  profileFields: ['name', 'email', 'link', 'locale', 'timezone'],
+  profileFields: ['id', 'email', 'displayName', 'picture.type(large)'],
   passReqToCallback: true,
 };
 const cb: VerifyFunctionWithRequest = (
@@ -33,7 +33,18 @@ const cb: VerifyFunctionWithRequest = (
   profile,
   done
 ) => {
-  console.log('cb', accessToken, refreshToken, profile);
+  console.log('req.user', req.user);
+  // TODO: Implement strategy
+  // mock user
+  const user = {
+    id: `user-${new Date().getTime()}`,
+    type: 'facebook',
+    name: profile.displayName,
+    picture: profile.photos[0].value,
+    provider: 'facebook',
+    providerId: profile.id,
+  };
+  done(undefined, user);
 };
 
 passport.use(new FacebookStrategy(options, cb));

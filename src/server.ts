@@ -35,10 +35,7 @@ export default class Server {
   }
 
   private middleware() {
-    console.log(passportConfig);
     const { app } = this;
-    // primary app router
-    app.use('/', routes);
 
     // express configuration
     app.set('views', path.join(__dirname, '../views'));
@@ -47,6 +44,13 @@ export default class Server {
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(expressValidator());
+    app.use(
+      session({
+        resave: false,
+        saveUninitialized: true,
+        secret: process.env.SESSION_SECRET,
+      })
+    );
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
@@ -59,6 +63,9 @@ export default class Server {
     app.use(
       express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 })
     );
+
+    // primary app router
+    app.use('/', routes);
   }
 
   listen(port = Server.DEFAULT_PORT) {
