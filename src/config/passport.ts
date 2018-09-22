@@ -5,45 +5,42 @@ import {
   StrategyOptionWithRequest,
   VerifyFunctionWithRequest,
 } from 'passport-facebook';
+import User, { createUser } from '../database/models/User';
 const FacebookStrategy = passportFacebook.Strategy;
 
 const { FACEBOOK_ID, FACEBOOK_SECRET } = process.env;
 console.log('🎫 passport', FACEBOOK_ID, FACEBOOK_SECRET);
 
 passport.serializeUser<any, any>((user, done) => {
-  console.log('serializeUser', user);
   done(undefined, user.id);
 });
 
-passport.deserializeUser((id, done) => {
-  console.log('deserializeUser', id);
+passport.deserializeUser(async (id: string, done) => {
+  const user = await User.findById(id);
+  done(undefined, user);
 });
 
 const options: StrategyOptionWithRequest = {
   clientID: FACEBOOK_ID,
   clientSecret: FACEBOOK_SECRET,
   callbackURL: '/auth/facebook/callback',
-  profileFields: ['id', 'email', 'displayName', 'picture.type(large)'],
+  profileFields: ['displayName', 'email'],
   passReqToCallback: true,
 };
-const cb: VerifyFunctionWithRequest = (
+const cb: VerifyFunctionWithRequest = async (
   req,
   accessToken,
   refreshToken,
   profile,
   done
 ) => {
-  console.log('req.user', req.user);
-  // TODO: Implement strategy
-  // mock user
-  const user = {
-    id: `user-${new Date().getTime()}`,
+  const userParams = {
     type: 'facebook',
     name: profile.displayName,
-    picture: profile.photos[0].value,
-    provider: 'facebook',
+    picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
     providerId: profile.id,
   };
+  const user = await createUser(userParams);
   done(undefined, user);
 };
 
