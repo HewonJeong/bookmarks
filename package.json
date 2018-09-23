@@ -1,7 +1,7 @@
 {
   "name": "bookmarks",
   "version": "0.1.0",
-  "description": "An api server for sosical bookmarks service to learn Typescript, Node.js and mysql",
+  "description": "An api server for social bookmarks service to learn Typescript, Node.js and mysql",
   "repository": {
     "type": "git",
     "url": "https://github.com/hewonjeong/bookmarks"
