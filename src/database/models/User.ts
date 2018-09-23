@@ -1,29 +1,38 @@
-import { UUIDV4, STRING, DATE, TEXT, ENUM } from 'sequelize';
+import _ from 'lodash';
+import { UUIDV4, STRING, TEXT, ENUM, Instance } from 'sequelize';
 import db from '../';
 
-const User = db.define('user', {
-  id: {
-    type: UUIDV4,
-    defaultValue: UUIDV4,
-    primaryKey: true,
-  },
-  name: STRING,
-  type: {
-    type: ENUM,
-    values: ['facebook'],
-  },
-  providerId: STRING,
-  picture: TEXT,
-});
-
-export const createUser = (params: {
-  type: string;
+export enum Provider {
+  Facebook = 'facebook',
+}
+interface UserAttributes {
+  id?: string;
   name: string;
-  picture: string;
+  type: Provider;
   providerId: string;
-}) =>
-  User.create({
-    id: undefined,
-    ...params,
-  });
+  picture: string;
+  archived?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+type UserInstance = Instance<UserAttributes> & UserAttributes;
+const User = db.define<UserInstance, UserAttributes>(
+  'user',
+  {
+    id: {
+      type: UUIDV4,
+      defaultValue: UUIDV4,
+      primaryKey: true,
+    },
+    type: {
+      type: ENUM,
+      values: _.values(Provider),
+    },
+    name: STRING,
+    providerId: STRING,
+    picture: TEXT,
+  },
+  { paranoid: true }
+);
+
 export default User;

@@ -22,6 +22,7 @@ const db: Sequelize.Sequelize = new Sequelize(
     dialectOptions: {
       socketPath: DATABASE_SOCKET,
     },
+    paranoid: true,
     operatorsAliases: false,
     pool: {
       max: 5,

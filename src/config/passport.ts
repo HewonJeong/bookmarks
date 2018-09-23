@@ -5,7 +5,7 @@ import {
   StrategyOptionWithRequest,
   VerifyFunctionWithRequest,
 } from 'passport-facebook';
-import User, { createUser } from '../database/models/User';
+import User, { createUser, Provider } from '../database/models/User';
 const FacebookStrategy = passportFacebook.Strategy;
 
 const { FACEBOOK_ID, FACEBOOK_SECRET } = process.env;
@@ -35,12 +35,12 @@ const cb: VerifyFunctionWithRequest = async (
   done
 ) => {
   const userParams = {
-    type: 'facebook',
+    type: Provider.Facebook,
     name: profile.displayName,
     picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
     providerId: profile.id,
   };
-  const user = await createUser(userParams);
+  const user = await User.create(userParams);
   done(undefined, user);
 };
 
