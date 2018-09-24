@@ -1,11 +1,10 @@
 import passport from 'passport';
 import passportFacebook from 'passport-facebook';
-import { Request, Response, NextFunction } from 'express';
 import {
   StrategyOptionWithRequest,
   VerifyFunctionWithRequest,
 } from 'passport-facebook';
-import User, { createUser, Provider } from '../database/models/User';
+import User, { Provider } from '../database/models/User';
 const FacebookStrategy = passportFacebook.Strategy;
 
 const { FACEBOOK_ID, FACEBOOK_SECRET } = process.env;
@@ -34,14 +33,25 @@ const cb: VerifyFunctionWithRequest = async (
   profile,
   done
 ) => {
-  const userParams = {
-    type: Provider.Facebook,
-    name: profile.displayName,
-    picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
-    providerId: profile.id,
-  };
-  const user = await User.create(userParams);
-  done(undefined, user);
+  try {
+    const searchCondition = {
+      type: Provider.Facebook,
+      providerId: profile.id,
+    };
+    const [user] = await User.findOrCreate({
+      where: searchCondition,
+      defaults: {
+        type: Provider.Facebook,
+        providerId: profile.id,
+        name: profile.displayName,
+        picture: `https://graph.facebook.com/${profile.id}/picture?type=large`,
+      },
+    });
+    done(undefined, user);
+  } catch (error) {
+    // DB error
+    done(error);
+  }
 };
 
 passport.use(new FacebookStrategy(options, cb));

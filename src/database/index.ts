@@ -17,8 +17,8 @@ const db: Sequelize.Sequelize = new Sequelize(
   {
     host: DATABASE_HOST,
     port: parseInt(DATABASE_PORT),
+    logging: false,
     dialect: 'mysql',
-    logging: NODE_ENV === 'development',
     dialectOptions: {
       socketPath: DATABASE_SOCKET,
     },
