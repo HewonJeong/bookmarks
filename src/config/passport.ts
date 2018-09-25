@@ -4,9 +4,11 @@ import {
   StrategyOptionWithRequest,
   VerifyFunctionWithRequest,
 } from 'passport-facebook';
+import _ from 'lodash';
+import { Request, Response, NextFunction } from 'express';
 import User, { Provider } from '../database/models/User';
-const FacebookStrategy = passportFacebook.Strategy;
 
+const FacebookStrategy = passportFacebook.Strategy;
 const { FACEBOOK_ID, FACEBOOK_SECRET } = process.env;
 console.log('🎫 passport', FACEBOOK_ID, FACEBOOK_SECRET);
 
@@ -56,4 +58,23 @@ const cb: VerifyFunctionWithRequest = async (
 
 passport.use(new FacebookStrategy(options, cb));
 
-export default {};
+type middleware = (req: Request, res: Response, next: NextFunction) => void;
+
+/* Login Required middleware */
+export const isAuthenticated: middleware = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+};
+
+/* Authorization Required middleware */
+export const isAuthorized: middleware = (req, res, next) => {
+  const provider = req.path.split('/').slice(-1)[0];
+
+  if (_.find(req.user.tokens, { kind: provider })) {
+    next();
+  } else {
+    res.redirect(`/auth/${provider}`);
+  }
+};
