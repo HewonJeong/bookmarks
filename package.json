@@ -12,6 +12,7 @@
     "start": "npm run serve",
     "build": "npm run build-sass && npm run build-ts && npm run tslint && npm run copy-static-assets",
     "serve": "node dist/index.js",
+    "dev": "ts-node-dev ./src/index.ts",
     "watch-node": "nodemon dist/index.js",
     "watch": "nodemon --exec ts-node -- ./src/index.ts",
     "watch-prev": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-sass\" \"npm run watch-ts\" \"npm run watch-node\"",
@@ -53,6 +54,7 @@
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
     "sequelize": "^4.38.0",
+    "ts-node-dev": "^1.0.0-pre.30",
     "winston": "^2.4.0"
   },
   "devDependencies": {
