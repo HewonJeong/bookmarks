@@ -36,7 +36,7 @@ export default class Server {
 
   private middleware() {
     const { app } = this;
-
+    console.log(passportConfig);
     // express configuration
     app.set('views', path.join(__dirname, '../views'));
     app.set('view engine', 'pug');
