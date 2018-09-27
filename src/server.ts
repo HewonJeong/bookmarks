@@ -4,6 +4,7 @@ import session from 'express-session';
 import bodyParser from 'body-parser';
 import flash from 'express-flash';
 import path from 'path';
+import errorhandler from 'errorhandler';
 import logger from './util/logger';
 import lusca from 'lusca';
 import routes from './routes';
@@ -66,7 +67,11 @@ export default class Server {
 
     // primary app router
     app.use('/', routes);
-  }
+    
+    // error handler
+    if (process.env.NODE_ENV === 'development') {
+      app.use(errorhandler());
+    }
 
   listen(port = Server.DEFAULT_PORT) {
     const { app } = this;
