@@ -65,7 +65,8 @@ export const isAuthenticated: middleware = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect('/login');
+  res.status(401);
+  next(new Error('User is not logged in'));
 };
 
 /* Authorization Required middleware */

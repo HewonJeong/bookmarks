@@ -12,9 +12,9 @@ import passport from 'passport';
 import expressValidator from 'express-validator';
 import bluebird from 'bluebird';
 import db from './database';
-
+import errorHandler from 'errorhandler';
 // API keys and Passport configuration
-import passportConfig from './config/passport';
+import * as passportConfig from './config/passport';
 
 export default class Server {
   private app: Express;
@@ -37,6 +37,8 @@ export default class Server {
 
   private middleware() {
     const { app } = this;
+    const { SESSION_SECRET, NODE_ENV } = process.env;
+
     console.log(passportConfig);
     // express configuration
     app.set('views', path.join(__dirname, '../views'));
@@ -49,7 +51,7 @@ export default class Server {
       session({
         resave: false,
         saveUninitialized: true,
-        secret: process.env.SESSION_SECRET,
+        secret: SESSION_SECRET,
       })
     );
     app.use(passport.initialize());
@@ -67,11 +69,13 @@ export default class Server {
 
     // primary app router
     app.use('/', routes);
-    
+    app.get('/me', passportConfig.isAuthenticated, (req, res, next) => {
+      res.json(req.user);
+    });
+
     // error handler
-    if (process.env.NODE_ENV === 'development') {
-      app.use(errorhandler());
-    }
+    NODE_ENV === 'development' && app.use(errorhandler());
+  }
 
   listen(port = Server.DEFAULT_PORT) {
     const { app } = this;
