@@ -5,15 +5,11 @@ import bodyParser from 'body-parser';
 import flash from 'express-flash';
 import path from 'path';
 import errorhandler from 'errorhandler';
-import logger from './util/logger';
 import lusca from 'lusca';
 import routes from './routes';
 import passport from 'passport';
 import expressValidator from 'express-validator';
-import bluebird from 'bluebird';
 import db from './database';
-import errorHandler from 'errorhandler';
-// API keys and Passport configuration
 import * as passportConfig from './config/passport';
 
 export default class Server {
@@ -39,7 +35,6 @@ export default class Server {
     const { app } = this;
     const { SESSION_SECRET, NODE_ENV } = process.env;
 
-    console.log(passportConfig);
     // express configuration
     app.set('views', path.join(__dirname, '../views'));
     app.set('view engine', 'pug');
