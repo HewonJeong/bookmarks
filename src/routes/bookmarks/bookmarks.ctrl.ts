@@ -1,11 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import Bookmark from '../../database/models/Bookmark';
 
-export const checkBody = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {};
+export const checkBody = (req: Request, res: Response, next: NextFunction) => {
+  const keys = ['title', 'url', 'description', 'image'];
+  keys.forEach(key => req.checkBody(key, `${key} is empty😵`).notEmpty());
+  const errors = req.validationErrors();
+  if (errors) {
+    res.status(422).json({ errors });
+  } else {
+    next();
+  }
+};
 
 export const postBookmark = async (req: Request, res: Response) => {
   type Body = {
