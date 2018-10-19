@@ -40,6 +40,23 @@ export const deleteBookmark = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  type Params = { id: string };
+  const params: Params = req.params;
+  const { id } = params;
+  const userId: string = req.user.id;
+
+  try {
+    const result = await Bookmark.destroy({ where: { id, createdBy: userId } });
+    if (result === 0) {
+      res.status(400);
+      throw new Error(`There\'s no available item to delete: ${id}'`);
+    }
+    res.end();
+  } catch (e) {
+    res.statusCode === 200 && res.status(500);
+    res.json({ error: e.message || 'error during deleting a bookmark' });
+  }
+};
 
 export const getBookmarks = (req: Request, res: Response) => {};
