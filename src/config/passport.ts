@@ -60,13 +60,31 @@ passport.use(new FacebookStrategy(options, cb));
 
 type middleware = (req: Request, res: Response, next: NextFunction) => void;
 
+// TODO: divide test user middleware for dev
+const ALLOWED_TEST_USER: { [index: string]: { id: string } } = {
+  dev001: {
+    id: '9b224733-012f-4af3-89a6-840805764429',
+  },
+};
+
 /* Login Required middleware */
 export const isAuthenticated: middleware = (req, res, next) => {
+  const testUserId = req.header('Mock-User');
   if (req.isAuthenticated()) {
     return next();
+  } else if (testUserId) {
+    const testUser = ALLOWED_TEST_USER[testUserId];
+    if (testUser) {
+      req.user = testUser;
+      next();
+    } else {
+      res.status(401);
+      next(new Error('A received test user is not allowed'));
+    }
+  } else {
+    res.status(401);
+    next(new Error('User is not loggined'));
   }
-  res.status(401);
-  next(new Error('User is not logged in'));
 };
 
 /* Authorization Required middleware */
